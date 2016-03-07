@@ -2,6 +2,7 @@ package org.culturegraph.mf.streamstyle;
 
 import static java.util.Arrays.asList;
 import static org.culturegraph.mf.streamstyle.Flux.branch;
+import static org.culturegraph.mf.streamstyle.Module.module;
 
 import java.util.List;
 
@@ -17,9 +18,9 @@ public class Main {
 				.flatMap(obj -> asList(obj.split("\n")))
 				.toStream(new FormetaDecoder())
 				.fork(
-						branch().with(new StreamLogger("1")),
-						branch().with(new StreamLogger("2"))
-				).join()
+						branch(module(new StreamLogger("1a"))).processWith(module(new StreamLogger("1b"))),
+						branch(module(new StreamLogger("2a"))).processWith(module(new StreamLogger("2b"))))
+				.join()
 				.toObjects(new FormetaEncoder())
 				.collect();
 

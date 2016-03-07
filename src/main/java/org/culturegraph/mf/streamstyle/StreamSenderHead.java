@@ -1,5 +1,7 @@
 package org.culturegraph.mf.streamstyle;
 
+import static java.util.Arrays.stream;
+
 import org.culturegraph.mf.framework.ObjectReceiver;
 import org.culturegraph.mf.framework.Sender;
 import org.culturegraph.mf.framework.StreamPipe;
@@ -30,10 +32,15 @@ public class StreamSenderHead<F> extends AbstractHead<F> {
 		return new ObjectSenderHead<>(this, module);
 	}
 
-	public StreamForkHead<F> fork() {
+	@SafeVarargs
+	public final JoinStreamHead<F> fork(
+			final Branch<StreamReceiver, StreamReceiver>... branches) {
 		final StreamTee streamTee = new StreamTee();
+		stream(branches)
+				.map(Branch::getFirstModule)
+				.forEach(streamTee::addReceiver);
 		headModule.setReceiver(streamTee);
-		return new StreamForkHead<>(this, streamTee);
+		return new JoinStreamHead<>(this, branches);
 	}
 
 }

@@ -1,5 +1,7 @@
 package org.culturegraph.mf.streamstyle;
 
+import java.util.List;
+
 import org.culturegraph.mf.framework.Receiver;
 import org.culturegraph.mf.framework.Sender;
 
@@ -10,6 +12,11 @@ public class Branch<F extends Receiver, L extends Receiver> {
 
 	private final F firstModule;
 	private final Sender<L> lastModule;
+
+	Branch() {
+		firstModule = null;
+		lastModule = null;
+	}
 
 	Branch(final Module<F, L> module) {
 		firstModule = module.getReceiver();
@@ -30,9 +37,16 @@ public class Branch<F extends Receiver, L extends Receiver> {
 		return lastModule;
 	}
 
-	public <N extends Receiver> Branch<F, N> processWith(final Module<L, N> module) {
+	public <N extends Receiver> Branch<F, N> with(final Module<L, N> module) {
 		lastModule.setReceiver(module.getReceiver());
 		return new Branch<>(this, module.getSender());
+	}
+
+	public <T> List<T> collect() {
+		final Collector<T> collector = new Collector<>();
+		lastModule.setReceiver(collector);
+		firstModule;
+		return collector.getCollectedObjects();
 	}
 
 }

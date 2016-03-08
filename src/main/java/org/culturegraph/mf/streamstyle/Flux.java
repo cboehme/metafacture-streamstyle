@@ -1,5 +1,8 @@
 package org.culturegraph.mf.streamstyle;
 
+import static org.culturegraph.mf.streamstyle.Module.module;
+
+import org.culturegraph.mf.framework.ObjectReceiver;
 import org.culturegraph.mf.framework.Receiver;
 
 /**
@@ -7,13 +10,13 @@ import org.culturegraph.mf.framework.Receiver;
  */
 public class Flux {
 
-	public static <T> ObjectSenderHead<T, T> process(final T input) {
+	public static <T> Branch<ObjectReceiver<T>, ObjectReceiver<T>> process(final T input) {
 		final FlowStarter<T> flowStarter = new FlowStarter<>(input);
-		return new ObjectSenderHead<>(new AbstractHead<T>(flowStarter), flowStarter);
+		return new Branch(module(flowStarter));
 	}
 
-	public static <R extends Receiver, S extends Receiver> Branch<R, S> branch(final Module<R, S> module) {
-		return new Branch<>(module);
+	public static <R extends Receiver, S extends Receiver> Branch<R, S> branch()  {
+		return new Branch<>();
 	}
 
 }

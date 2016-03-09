@@ -2,6 +2,7 @@ package org.culturegraph.mf.streamstyle;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 import org.culturegraph.mf.framework.LifeCycle;
 import org.culturegraph.mf.framework.ObjectReceiver;
@@ -9,7 +10,7 @@ import org.culturegraph.mf.framework.ObjectReceiver;
 /**
  * @author Christoph Böhme
  */
-public class DuplicateObjectsStrategy<T> implements DispatcherStrategy<ObjectReceiver<T>> {
+public class DuplicateObjectsStrategy<T> implements DispatcherStrategy<ObjectReceiver<T>, Void> {
 
 	private final List<ObjectReceiver<T>> receivers = new ArrayList<>();
 	private final ObjectReceiver<T> duplicator = new ObjectDuplicator();
@@ -20,7 +21,8 @@ public class DuplicateObjectsStrategy<T> implements DispatcherStrategy<ObjectRec
 	}
 
 	@Override
-	public void addFlow(final ObjectReceiver<T> firstModule) {
+	public void addFlow(final Predicate<Void> condition,
+			final ObjectReceiver<T> firstModule) {
 		receivers.add(firstModule);
 	}
 

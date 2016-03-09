@@ -36,8 +36,8 @@ public class Flow<F extends Receiver, L extends Receiver> {
 		return new Flow<>(this, module.getSender());
 	}
 
-	public FlowDispatcherStart<F, L> dispatchWith(
-			final DispatcherStrategy<L> dispatcherStrategy) {
+	public <P> FlowDispatcherStart<F, L, P> dispatchWith(
+			final DispatcherStrategy<L, P> dispatcherStrategy) {
 		lastModule.setReceiver(dispatcherStrategy.getReceiver());
 		return new FlowDispatcherStart<>(this, dispatcherStrategy);
 	}

@@ -10,6 +10,7 @@ import java.util.List;
 import org.culturegraph.mf.framework.ObjectReceiver;
 import org.culturegraph.mf.stream.converter.FormetaDecoder;
 import org.culturegraph.mf.stream.converter.FormetaEncoder;
+import org.culturegraph.mf.stream.pipe.ObjectLogger;
 import org.culturegraph.mf.stream.pipe.StreamLogger;
 
 public class Main {
@@ -24,16 +25,19 @@ public class Main {
 
 		final Flow<ObjectReceiver<String>, ObjectReceiver<String>> myFlow2 =
 				Flow.startWith(module(new FormetaDecoder()))
-						.dispatchWith(new DuplicateStreamStrategy(), new NaiveStreamJoiner())
-								.to(Flow.startWith(module(new StreamLogger("Logger X: "))))
-								.to(Flow.startWith(module(new StreamLogger("Logger Y: "))))
+						.dispatchWith(new DuplicateStreamStrategy())
+								.to(Flow
+										.startWith(module(new FormetaEncoder()))
+										.followedBy(module(new ObjectLogger<>("Logger X: ")))
+										.followedBy(module(new FormetaDecoder()))
+										.followedBy(module(new StreamLogger("Logger Y: "))))
 								.to(module(new StreamLogger("Logger Z: ")))
-						.join()
+						.join(new NaiveStreamJoiner())
 						.followedBy(module(new FormetaEncoder()))
-						.dispatchWith(new DuplicateObjectStrategy<>(), new NaiveObjectJoiner<String>())
+						.dispatchWith(new DuplicateObjectsStrategy<>())
 								.to(map(obj -> "RECORD1: " + obj))
 								.to(map(obj -> "RECORD2: " + obj))
-						.join();
+						.join(new NaiveObjectsJoiner<>());
 
 		final List<String> records =
 				Flux.process("1{lit1: val1}\n2{lit2: val2}")

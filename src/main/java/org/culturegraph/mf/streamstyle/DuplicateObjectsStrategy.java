@@ -9,7 +9,7 @@ import org.culturegraph.mf.framework.ObjectReceiver;
 /**
  * @author Christoph Böhme
  */
-public class DuplicateObjectStrategy<T> implements DispatcherStrategy<ObjectReceiver<T>> {
+public class DuplicateObjectsStrategy<T> implements DispatcherStrategy<ObjectReceiver<T>> {
 
 	private final List<ObjectReceiver<T>> receivers = new ArrayList<>();
 	private final ObjectReceiver<T> duplicator = new ObjectDuplicator();

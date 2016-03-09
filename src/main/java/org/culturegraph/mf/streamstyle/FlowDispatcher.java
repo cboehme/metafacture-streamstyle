@@ -10,16 +10,12 @@ public class FlowDispatcher<F extends Receiver, L extends Receiver, N extends Re
 	private final Flow<F, L> oldFlow;
 
 	private final DispatcherStrategy<L> dispatcherStrategy;
-	private final JoinStrategy<N> joinStrategy;
 
 	private final List<Flow<L, N>> flows = new ArrayList<>();
 
-	public FlowDispatcher(final Flow<F, L> oldFlow,
-			final DispatcherStrategy<L> dispatcherStrategy,
-			final JoinStrategy<N> joinStrategy) {
-		this.oldFlow = oldFlow;
-		this.dispatcherStrategy = dispatcherStrategy;
-		this.joinStrategy = joinStrategy;
+	FlowDispatcher(final FlowDispatcherStart<F, L> flowDispatcherStart) {
+		this.oldFlow = flowDispatcherStart.oldFlow;
+		this.dispatcherStrategy = flowDispatcherStart.dispatcherStrategy;
 	}
 
 	public FlowDispatcher<F, L, N> to(final Module<L, N> module) {
@@ -32,14 +28,9 @@ public class FlowDispatcher<F extends Receiver, L extends Receiver, N extends Re
 		return this;
 	}
 
-	public Flow<F, N> join() {
+	public Flow<F, N> join(final JoinStrategy<N> joinStrategy) {
 		flows.forEach(flow -> joinStrategy.addFlow(flow.getLastModule()));
 		return new Flow<>(oldFlow, joinStrategy.getSender());
 	}
-
-//	public Flow<F, N> join(final JoinStrategy<N> joinStrategy) {
-//		flows.forEach(flow -> joinStrategy.addFlow(flow.getLastModule()));
-//		return new Flow<>(oldFlow, joinStrategy.getSender());
-//	}
 
 }

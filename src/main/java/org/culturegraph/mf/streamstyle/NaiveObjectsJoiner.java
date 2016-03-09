@@ -8,7 +8,7 @@ import org.culturegraph.mf.framework.Sender;
 /**
  * @author Christoph Böhme
  */
-public class NaiveObjectJoiner<T> implements JoinStrategy<ObjectReceiver<T>> {
+public class NaiveObjectsJoiner<T> implements JoinStrategy<ObjectReceiver<T>> {
 
 	private ObjectPipe<T, ObjectReceiver<T>> passThrough = new IdentityObjectPipe();
 

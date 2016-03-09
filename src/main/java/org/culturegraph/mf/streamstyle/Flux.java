@@ -2,6 +2,8 @@ package org.culturegraph.mf.streamstyle;
 
 import java.util.List;
 
+import org.culturegraph.mf.framework.DefaultObjectReceiver;
+import org.culturegraph.mf.framework.DefaultStreamReceiver;
 import org.culturegraph.mf.framework.ObjectReceiver;
 import org.culturegraph.mf.framework.Sender;
 import org.culturegraph.mf.framework.StreamReceiver;
@@ -81,6 +83,11 @@ public class Flux {
 			return collector.getCollectedObjects();
 		}
 
+		public void discardResults() {
+			flowEnd.setReceiver(new DefaultObjectReceiver<>());
+			starter.run();
+		}
+
 	}
 
 	private static class StreamReceivingTerminator {
@@ -101,6 +108,11 @@ public class Flux {
 			flowEnd.setReceiver(eventList);
 			starter.run();
 			return eventList;
+		}
+
+		public void discardResults() {
+			flowEnd.setReceiver(new DefaultStreamReceiver());
+			starter.run();
 		}
 
 	}

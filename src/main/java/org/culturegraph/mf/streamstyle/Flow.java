@@ -12,7 +12,7 @@ public class Flow<F extends Receiver, L extends Receiver> {
 	private final Sender<L> lastModule;
 
 	private Flow(final Module<F, L> module) {
-		firstModule = module.getReceiver();
+		this.firstModule = module.getReceiver();
 		lastModule = module.getSender();
 	}
 
@@ -36,6 +36,11 @@ public class Flow<F extends Receiver, L extends Receiver> {
 		return new Flow<>(this, module.getSender());
 	}
 
+	public TerminatedFlow<F, L> followedBy(final TerminatingModule<L> module) {
+		lastModule.setReceiver(module.getReceiver());
+		return new TerminatedFlow<>(this, module);
+	}
+
 	public <P> FlowDispatcherStart<F, L, P> dispatchWith(
 			final DispatcherStrategy<L, P> dispatcherStrategy) {
 		lastModule.setReceiver(dispatcherStrategy.getReceiver());
@@ -45,6 +50,11 @@ public class Flow<F extends Receiver, L extends Receiver> {
 	public static <R extends Receiver, S extends Receiver> Flow<R, S> startWith(
 			final Module<R, S> module)  {
 		return new Flow<>(module);
+	}
+
+	public static <R extends Receiver> TerminatedFlow<R, R> startWith(
+			final TerminatingModule<R> module) {
+		return new TerminatedFlow<>(module, module);
 	}
 
 }

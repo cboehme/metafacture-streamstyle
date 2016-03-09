@@ -40,6 +40,10 @@ public class Flux {
 					flow.getLastModule());
 		}
 
+		public void with(final TerminatedFlow<ObjectReceiver<T>, ?> flow) {
+			flow.getFirstModule().process(input);
+		}
+
 	}
 
 	private interface Starter {

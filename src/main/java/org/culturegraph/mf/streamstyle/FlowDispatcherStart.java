@@ -38,4 +38,23 @@ public class FlowDispatcherStart<F extends Receiver, L extends Receiver, P> {
 		return flowDispatcher.to(condition, flow);
 	}
 
+	public TerminatedFlowDispatcher<F, L, P> to(final TerminatingModule<L> module) {
+		return to(Flow.startWith(module));
+	}
+
+	public TerminatedFlowDispatcher<F, L, P> to(final TerminatedFlow<L, ?> flow) {
+		return to(x -> true, flow);
+	}
+
+	public TerminatedFlowDispatcher<F, L, P> to(Predicate<P> condition,
+			final TerminatingModule<L> module) {
+		return to(condition, Flow.startWith(module));
+	}
+
+	public TerminatedFlowDispatcher<F, L, P> to(Predicate<P> condition,
+			final TerminatedFlow<L, ?> flow) {
+		final TerminatedFlowDispatcher<F, L, P> flowDispatcher = new TerminatedFlowDispatcher<>(this);
+		return flowDispatcher.to(condition, flow);
+	}
+
 }

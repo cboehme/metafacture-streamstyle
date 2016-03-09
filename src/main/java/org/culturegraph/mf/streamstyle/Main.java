@@ -38,6 +38,15 @@ public class Main {
 
 		LOG.info("------------------- Flow with Lambda Expressions ------------------- ");
 		flowWithLambdaExpressions();
+
+		LOG.info("------------------------- Terminating Flow ------------------------- ");
+		terminatingFlow();
+
+		LOG.info("------------------ Single Module Terminating Flow ------------------ ");
+		singleModuleTerminatingFlow();
+
+		LOG.info("------------------ Flow with Terminating Branches ------------------ ");
+		flowWithTerminatingBranches();
 	}
 
 	private static void simpleSingleBranchFlow() {
@@ -122,6 +131,37 @@ public class Main {
 				.collectResults()
 				.stream()
 				.forEach(System.out::println);
+	}
+
+	private static void terminatingFlow() {
+		final TerminatedFlow<ObjectReceiver<String>, ObjectReceiver<String>> flow =
+				Flow.startWith(flatMap((String obj) -> asList(obj.split(" "))))
+					.followedBy(TerminatingModule.module(new ObjectLogger<>()));
+
+		Flux.process("A B C D")
+				.with(flow);
+	}
+
+	private static void singleModuleTerminatingFlow() {
+		final TerminatedFlow<ObjectReceiver<String>, ObjectReceiver<String>> flow =
+				Flow.startWith(TerminatingModule.module(new ObjectLogger<>()));
+
+		Flux.process("A B C D")
+				.with(flow);
+	}
+
+	private static void flowWithTerminatingBranches() {
+		final TerminatedFlow<ObjectReceiver<String>, ?> flow =
+				Flow.startWith(flatMap((String obj) -> asList(obj.split(" "))))
+						.dispatchWith(new DuplicateObjectsStrategy<>())
+								.to(TerminatingModule.module(new ObjectLogger<>()))
+								.to(
+										Flow.startWith(map((String obj) -> "(" + obj + ")"))
+												.followedBy(TerminatingModule.module(new ObjectLogger<>())))
+								.terminate();
+
+		Flux.process("A B C D")
+				.with(flow);
 	}
 
 }

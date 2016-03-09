@@ -24,9 +24,7 @@ public class FlowDispatcher<F extends Receiver, L extends Receiver, N extends Re
 	}
 
 	public FlowDispatcher<F, L, N, P> to(final Flow<L, N> flow) {
-		dispatcherStrategy.addFlow(x -> true, flow.getFirstModule());
-		flows.add(flow);
-		return this;
+		return to(x -> true, flow);
 	}
 
 	public FlowDispatcher<F, L, N, P> to(Predicate<P> condition,

@@ -25,4 +25,15 @@ public class InlineModules {
 			}
 		});
 	}
+
+	public static <T, U> Module<ObjectReceiver<T>, ObjectReceiver<U>> map(
+			final Function<T, U> function) {
+		return module(new DefaultObjectPipe<T, ObjectReceiver<U>>() {
+			@Override
+			public void process(final T object) {
+				getReceiver().process(function.apply(object));
+			}
+		});
+	}
+
 }
